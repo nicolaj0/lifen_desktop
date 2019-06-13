@@ -1,6 +1,51 @@
 'use strict'
 
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, net } = require('electron')
+
+var holder = document.getElementById('drag-file');
+
+holder.ondragover = () => {
+  return false;
+};
+
+holder.ondragleave = () => {
+  return false;
+};
+
+holder.ondragend = () => {
+  return false;
+};
+
+holder.ondrop = (e) => {
+  e.preventDefault();
+
+  for (let f of e.dataTransfer.files) {
+    console.log('File(s) you dragged here: ', f.path)
+    ipcRenderer.send('on-file-dropped', f.path)
+
+  }
+
+  return false;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 
 // delete todo by its text value ( used below in event listener)
 const deleteTodo = (e) => {
@@ -31,4 +76,4 @@ ipcRenderer.on('todos', (event, todos) => {
   todoList.querySelectorAll('.todo-item').forEach(item => {
     item.addEventListener('click', deleteTodo)
   })
-})
+})*/

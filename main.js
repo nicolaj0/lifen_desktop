@@ -1,69 +1,119 @@
 'use strict'
 
 const path = require('path')
-const { app, ipcMain } = require('electron')
+const {app, ipcMain} = require('electron')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
+const chokidar = require('chokidar');
 
 require('electron-reload')(__dirname)
+var fs = require('fs');
 
-// create a new todo store name "Todos Main"
-const todosData = new DataStore({ name: 'Todos Main' })
+function main() {
 
-function main () {
-  // todo list window
-  let mainWindow = new Window({
-    file: path.join('renderer', 'index.html')
-  })
+    const {net} = require('electron')
+    // todo list window
+    let mainWindow = new Window({
+        file: path.join('renderer', 'index.html')
+    })
 
-  // add todo window
-  let addTodoWin
 
-  // TODO: put these events into their own file
+    var fileLocation = path.join(__dirname, 'FHIR')
+    const watcher = chokidar.watch('.', {
+        persistent: true,
+        cwd: './FHIR',
+      });
+       
+      // Something to use when events are received.
+      const log = console.log.bind(console);
+      // Add event listeners.
+      watcher
+        .on('add', p => {
+            log(`File ${p} has been added`)
+            
+            log( path.join(fileLocation,p))
 
-  // initialize with todos
-  mainWindow.once('show', () => {
-    mainWindow.webContents.send('todos', todosData.todos)
-  })
+            
+            var data = fs.readFileSync(path.join(fileLocation,p));
 
-  // create add todo window
-  ipcMain.on('add-todo-window', () => {
-    // if addTodoWin does not already exist
-    if (!addTodoWin) {
-      // create a new add todo window
-      addTodoWin = new Window({
-        file: path.join('renderer', 'add.html'),
-        width: 400,
-        height: 400,
-        // close with the main window
-        parent: mainWindow
-      })
+            const request = net.request({
+                method: 'POST',
+                url: 'https://fhirtest.uhn.ca/baseDstu3/Binary',
+                body: data.toString('base64'),
+                headers: { "Content-Type": "text/plain" }
+            });
+    
+            request.on('response', (response) => {
+                console.log(`STATUS: ${response.statusCode}`)
+                  response.on('end', () => {
+                    console.log('No more data in response.')
+                  })
+            })
+            request.end()
+        })
+        
 
-      // cleanup
-      addTodoWin.on('closed', () => {
-        addTodoWin = null
-      })
-    }
-  })
 
-  // add-todo from add todo window
-  ipcMain.on('add-todo', (event, todo) => {
-    const updatedTodos = todosData.addTodo(todo).todos
+   /*  fs.watch('./FHIR', (eventType, filename) => {
+        if (filename) {
+          console.log(filename);
+          data = fs.readFileSync(filename);
 
-    mainWindow.send('todos', updatedTodos)
-  })
+          const request = net.request({
+              method: 'POST',
+              url: 'https://fhirtest.uhn.ca/baseDstu3/Binary',
+              body: data.toString('base64'),
+              headers: { "Content-Type": "text/plain" }
+          });
+  
+          request.on('response', (response) => {
+              console.log(`STATUS: ${response.statusCode}`)
+              console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+                response.on('end', () => {
+                  console.log('No more data in response.')
+                })
+          })
+          request.end()
+        }
+      }); */
 
-  // delete-todo from todo list window
-  ipcMain.on('delete-todo', (event, todo) => {
-    const updatedTodos = todosData.deleteTodo(todo).todos
 
-    mainWindow.send('todos', updatedTodos)
-  })
+    ipcMain.on('on-file-dropped', (e, f) => {
+        console.log(f)
+
+
+        var fs = require('fs'),
+            data = fs.readFileSync(f);
+
+        const request = net.request({
+            method: 'POST',
+            url: 'https://fhirtest.uhn.ca/baseDstu3/Binary',
+            body: data.toString('base64'),
+            headers: { "Content-Type": "text/plain" }
+        });
+
+        request.on('response', (response) => {
+            console.log(`STATUS: ${response.statusCode}`)
+            console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+              response.on('end', () => {
+                console.log('No more data in response.')
+              })
+        })
+        request.end()
+
+    })
+
+
+    // create add todo window
+
+
+    // add-todo from add todo window
+
 }
 
 app.on('ready', main)
 
 app.on('window-all-closed', function () {
-  app.quit()
+    app.quit()
 })

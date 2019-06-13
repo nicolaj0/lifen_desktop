@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\junic\.Rider2019.1\config\consoles\db" t="IncludeRecursive" />
+    <e p="C:\Users\junic\.Rider2019.1\config\extensions" t="IncludeRecursive" />
+    <e p="C:\Users\junic\.Rider2019.1\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\junic\.Rider2019.1\system\resharper-host\local\Transient\ReSharperHost\v191\SolutionCaches\_.19.01" t="ExcludeRecursive" />
+    <e p="C:\Users\junic\RiderProjects\electron-todo" t="IncludeFlat">
+      <e p="node_modules\@types" t="IncludeRecursive" />
+      <e p="node_modules\devtron" t="IncludeRecursive" />
+      <e p="node_modules\electron" t="IncludeRecursive" />
+      <e p="node_modules\electron-reload" t="IncludeRecursive" />
+      <e p="node_modules\electron-store" t="IncludeRecursive" />
+      <e p="node_modules\filereader" t="IncludeRecursive" />
+      <e p="node_modules\spectre.css" t="IncludeRecursive" />
+      <e p="node_modules\standard" t="IncludeRecursive" />
+    </e>
+  </component>
+</project>

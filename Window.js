@@ -5,8 +5,10 @@ const { BrowserWindow } = require('electron')
 // default window settings
 const defaultProps = {
   width: 500,
-  height: 800,
-  show: false
+  height: 600,
+  show: false,
+  backgroundColor: "#D6D8DC",
+
 }
 
 class Window extends BrowserWindow {

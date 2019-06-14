@@ -1,10 +1,9 @@
 'use strict'
 
 const path = require('path')
-const {app, ipcMain} = require('electron')
+const {app, ipcMain,BrowserWindow } = require('electron')
 
 const Window = require('./Window')
-const DataStore = require('./DataStore')
 const chokidar = require('chokidar');
 
 require('electron-reload')(__dirname)
@@ -12,13 +11,17 @@ var fs = require('fs');
 
 function main() {
 
+  
+
     const {net} = require('electron')
     // todo list window
-    let mainWindow = new Window({
+    let win = new Window({
         file: path.join('renderer', 'index.html')
     })
 
-
+ /*  var  win = new BrowserWindow({ width: 800, height: 600 })
+  win.loadURL(path.join('renderer', 'index.html')) */
+  
     var fileLocation = path.join(__dirname, 'FHIR')
     const watcher = chokidar.watch('.', {
         persistent: true,
@@ -33,7 +36,7 @@ function main() {
             log(`File ${p} has been added`)
             
             log( path.join(fileLocation,p))
-
+            win.webContents.send('ping', p)
             
             var data = fs.readFileSync(path.join(fileLocation,p));
 
@@ -53,30 +56,6 @@ function main() {
             request.end()
         })
         
-
-
-   /*  fs.watch('./FHIR', (eventType, filename) => {
-        if (filename) {
-          console.log(filename);
-          data = fs.readFileSync(filename);
-
-          const request = net.request({
-              method: 'POST',
-              url: 'https://fhirtest.uhn.ca/baseDstu3/Binary',
-              body: data.toString('base64'),
-              headers: { "Content-Type": "text/plain" }
-          });
-  
-          request.on('response', (response) => {
-              console.log(`STATUS: ${response.statusCode}`)
-              console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
-                response.on('end', () => {
-                  console.log('No more data in response.')
-                })
-          })
-          request.end()
-        }
-      }); */
 
 
     ipcMain.on('on-file-dropped', (e, f) => {

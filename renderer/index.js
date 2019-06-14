@@ -1,10 +1,10 @@
 'use strict'
 
-const { ipcRenderer, net } = require('electron')
+const { ipcRenderer } = require('electron')
 
 var holder = document.getElementById('drag-file');
 
-holder.ondragover = () => {
+/* older.ondragover = () => {
   return false;
 };
 
@@ -23,10 +23,22 @@ holder.ondrop = (e) => {
     console.log('File(s) you dragged here: ', f.path)
     ipcRenderer.send('on-file-dropped', f.path)
 
+
   }
 
   return false;
 };
+
+ */
+
+
+  ipcRenderer.on('ping', (event, message) => {
+    var init = $('#text-input').val()
+    var newVal =  `${init} '\r\n'  File ${message} has been added `
+    $('#text-input').text(newVal)
+    $('#text-input').focus()
+  })
+
 
 
 

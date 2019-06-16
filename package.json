@@ -24,6 +24,8 @@
     "electron-reload": "^1.2.5",
     "electron-store": "^2.0.0",
     "filereader": "^0.10.3",
+    "request-promise": "^4.2.4",
+    "rxjs": "^6.5.2",
     "spectre.css": "^0.5.3"
   }
 }

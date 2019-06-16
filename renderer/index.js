@@ -38,7 +38,9 @@ holder.ondrop = (e) => {
     $('#text-input').text(newVal)
     $('#text-input').focus()
   })
-
+  ipcRenderer.on('total', (event, message) => {
+    $('#total').text(message)
+  })
 
 
 
